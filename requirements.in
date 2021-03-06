@@ -1,3 +1,4 @@
 PyYAML
 atomicwrites
 PyGithub
+tqdm

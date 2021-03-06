@@ -15,6 +15,7 @@ from pathlib import Path
 import github
 import yaml
 from atomicwrites import atomic_write
+from tqdm import tqdm
 
 
 def binary_search(begin, end, lt):
@@ -33,7 +34,10 @@ def main(all_config):
 
     Path("repos").mkdir(exist_ok=True)
 
-    for name, config in all_config["repos"].items():
+    aliases_progress = tqdm(all_config["repos"].items(), leave=False)
+    for name, config in aliases_progress:
+        aliases_progress.set_description(name)
+
         path = Path("repos", f"{name}.yml")
         try:
             with path.open(encoding="utf-8") as f:
@@ -48,14 +52,14 @@ def main(all_config):
         }
         found_repos = {}
 
-        print(file=sys.stderr)
         for query in config["queries"]:
             *query_exact, query = query
             query = " ".join(
                 filter(None, [w.replace('"', " ").join('""') for w in query_exact] + [query])
             )
-            print(query, file=sys.stderr)
-            for result in gh.search_code(query):
+
+            results = gh.search_code(query)
+            for result in tqdm(results, total=results.totalCount, desc=query, leave=False):
                 repo_name = result.repository.full_name
                 try:
                     repo_info = repos[repo_name]
@@ -75,9 +79,8 @@ def main(all_config):
                 if new_usage not in repo_info["usages"]:
                     repo_info["usages"].append(new_usage)
 
-        for repo_info in found_repos.values():
+        for repo_info in tqdm(found_repos.values(), desc="Content", leave=False):
             repository = None
-
             if "first_used" not in repo_info and repo_info["usages"]:
                 repository = gh.get_repo(repo_info["repo"])
 
@@ -106,6 +109,7 @@ def main(all_config):
 
         del_repos = old_repos - found_repos.keys()
         if del_repos:
+            print()
             print(f"Dropped usages of {name}:")
             for repo_name in del_repos:
                 print(f"* {repo_name}")
@@ -120,6 +124,7 @@ def main(all_config):
         ]
         added_repos.sort(key=lambda repo_info: repo_info["stars"], reverse=True)
         if added_repos:
+            print()
             print(f"New usages of {name}:")
             for repo_info in added_repos:
                 repo_url = f"https://github.com/{repo_info['repo']}"

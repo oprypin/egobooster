@@ -22,6 +22,8 @@ pyyaml==5.4.1
     # via -r requirements.in
 requests==2.25.1
     # via pygithub
+tqdm==4.59.0
+    # via -r requirements.in
 urllib3==1.26.3
     # via requests
 wrapt==1.12.1
