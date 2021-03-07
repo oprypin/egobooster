@@ -7,24 +7,22 @@
 atomicwrites==1.4.0
     # via -r requirements.in
 certifi==2020.12.5
-    # via requests
-chardet==4.0.0
-    # via requests
-deprecated==1.2.11
-    # via pygithub
-idna==2.10
-    # via requests
-pygithub==1.54.1
+    # via httpx
+h11==0.12.0
+    # via httpcore
+httpcore==0.12.3
+    # via httpx
+httpx==0.17.0
     # via -r requirements.in
-pyjwt==1.7.1
-    # via pygithub
+idna==2.10
+    # via rfc3986
 pyyaml==5.4.1
     # via -r requirements.in
-requests==2.25.1
-    # via pygithub
+rfc3986[idna2008]==1.4.0
+    # via httpx
+sniffio==1.2.0
+    # via
+    #   httpcore
+    #   httpx
 tqdm==4.59.0
     # via -r requirements.in
-urllib3==1.26.3
-    # via requests
-wrapt==1.12.1
-    # via deprecated
