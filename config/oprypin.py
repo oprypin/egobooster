@@ -10,8 +10,12 @@ config = {
 }
 
 repos["nightly.link"] = {
-    "queries": [("https://nightly.link", "")],
+    "queries": [("https://nightly.link", "-path:.github/workflows")],
     "min_stars": 8,
+}
+repos["nightly.link in workflows"] = {
+    "queries": [("https://nightly.link", "path:.github/workflows")],
+    "min_stars": 5,
 }
 
 for name, min_stars in [
@@ -29,11 +33,17 @@ for name, plugname, *query, min_stars in [
     ("mkdocs-literate-nav", "literate-nav", 0),
     ("mkdocs-gen-files", "gen-files", 0),
     ("mkdocs-same-dir", "same-dir", 0),
+    ("mkdocstrings", "mkdocstrings", "-crystal", 10),
+    ("mkdocs-autorefs", "autorefs", 3),
 ]:
+    query = query or [""]
+    query[-1] += " filename:mkdocs.yml"
     queries = [
-        ("plugins", "- " + plugname, *query, "filename:mkdocs.yml"),
+        ("plugins", "- " + plugname, *query),
         (name, "filename:requirements.txt"),
     ]
+    if name in ["mkdocstrings", "mkdocs-autorefs"]:
+        del queries[-1]
     repos[name] = {"queries": queries, "min_stars": min_stars}
 
 for name, require, min_stars in [
