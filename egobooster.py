@@ -150,7 +150,7 @@ def main(all_config):
 
                 def yield_usages():
                     for usage in repo_info["usages"]:
-                        commits = list(gh.get_commits(**repo_info))[::-1]
+                        commits = list(gh.get_commits(repo_info["repo"], **usage))[::-1]
 
                         @functools.cache
                         def has_content(ref):
