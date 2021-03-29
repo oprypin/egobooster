@@ -32,6 +32,7 @@ def binary_search(begin, end, lt):
 
 class GitHubClient(httpx.Client):
     def __init__(self, token, *args, **kwargs):
+        kwargs.setdefault("timeout", 100)
         kwargs.setdefault("base_url", "https://api.github.com/")
         kwargs.setdefault("headers", {}).setdefault("Authorization", f"token {token}")
         super().__init__(*args, **kwargs)
